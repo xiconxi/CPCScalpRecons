@@ -1,5 +1,5 @@
 - Scalp Reconstruction from MRI dense point cloud or sparse points collected by the acquisition device
-![](.img/minimal_surface_scalp.gif)
+![](./imgs/minimal_surface_scalp.gif)
 
 - Scalp's CPC-TBN Frame
 ![](./imgs/TBNFrame.gif)
