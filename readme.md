@@ -1,3 +1,9 @@
+- Scalp Reconstruction from MRI densy point cloud or sparse points collected by acquisition device
+![](.img/minimal_surface_scalp.gif)
+
+- Scalp's CPC-TBN Frame
+![](./imgs/TBNFrame.gif)
+
 - Install:
 
 ```shell
