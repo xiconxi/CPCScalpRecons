@@ -15,5 +15,5 @@ conda install -c conda-forge igl, pyvista
 
 ```python
 from ScalpRecons import ScalpReconstruct
-V, F, cpc, T, B, N = ScalpReconstruct(Vs, nilr, cpc_inners=99)
+V, F, cpc, T, N, B = ScalpReconstruct(Vs, nilr, cpc_inners=99)
 ```
