@@ -57,7 +57,7 @@ def draw_tnb_frame(p: pv.Plotter, v, t, n, b, arrow_size=arrow_size):
     p.add_mesh(pv.Arrow(start= v, direction=t*arrow_size, scale="auto"), color="red")
     p.add_mesh(pv.Arrow(start= v, direction=n*arrow_size, scale="auto"), color="green")
     p.add_mesh(pv.Arrow(start= v, direction=b*arrow_size, scale="auto"), color="blue")
-    p.add_mesh(pv.Plane(v, n, arrow_size*4, arrow_size*4), color=tangent_plane_color, opacity=0.8)
+    p.add_mesh(pv.Plane(v, n, arrow_size*4, arrow_size*4), color=tangent_plane_color, opacity=0.6)
 
 
 def draw_cpc_wireframe(p: pv.Plotter, V: np.ndarray, n = 10):
@@ -78,7 +78,6 @@ if __name__ == "__main__":
     scalp.points, scalp.faces = V, np.column_stack([np.full((len(F), 1), 3), F])
 
     p = pv.Plotter()
-    p.set_background("white")
     # p.add_text("Scalp TBN Frame", font_size=18)
     scalp_ = p.add_mesh(scalp, ambient=0.06, diffuse=0.75, opacity=1, color=(1., 0.8, 0.7))#, scalars="yz_dot", cmap="jet")
 
