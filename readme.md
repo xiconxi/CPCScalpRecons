@@ -2,7 +2,7 @@
 ![](./imgs/minimal_surface_scalp.gif)
 
 - Scalp's CPC-TBN Frame
-![](./imgs/TBNFrame.gif)
+![](./imgs/CPCOrientation.gif)
 
 - Install:
 

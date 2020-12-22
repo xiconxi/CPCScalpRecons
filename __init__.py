@@ -9,7 +9,7 @@ import scipy.spatial.kdtree as kdtree
 import scipy.spatial.transform as transform
 
 from . import CPCSampling
-from . import TBNFrame
+from . import TNBFrame
 
 def border_approximate(Nz, Iz, Al, Ar, k = 30):
     borders = np.zeros((2, k, 3))
@@ -82,7 +82,7 @@ def ScalpReconstruct(V, nilr, cpc_inners=99):
 
     cpc_V, cpc_CPC, cpc_F = CPCSampling.generate_cpcmesh(mV, mF, Nzidx, Izidx, Alidx, Aridx, n=cpc_inners)
     cpc_N = igl.per_vertex_normals(cpc_V, cpc_F, igl.PER_VERTEX_NORMALS_WEIGHTING_TYPE_ANGLE)
-    T, B, N = TBNFrame.TBN_frame(cpc_V, cpc_N, cpc_inners)
+    T, B, N = TNBFrame.TNB_frame(cpc_V, cpc_N, cpc_inners)
     cpc_V, T, B, N = np.dot(cpc_V, R)+t, np.dot(T, R), np.dot(B, R), np.dot(N, R)
     return cpc_V, cpc_F, cpc_CPC, T, B, N
 
