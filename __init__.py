@@ -35,7 +35,7 @@ def contrl_vertices(V_src, V_dst, unique=True):
         Ws[inverse_idx[i]] += 1/(0.001+dis[i])
     Vs /= Ws[:, np.newaxis]
 
-    return unique_idx, Vs
+    return unique_idx.astype(np.int), Vs
 
 sV3, sF3 = igl.read_triangle_mesh(__path__[0]+"/data/sphere3.obj")
 sV5, sF5 = igl.read_triangle_mesh(__path__[0]+"/data/sphere5.obj")
