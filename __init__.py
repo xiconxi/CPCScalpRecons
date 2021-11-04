@@ -74,7 +74,10 @@ def ScalpReconstruct(V, nilr, cpc_inners=99):
     R, t = calibrate_nilr(nilr[0], nilr[1], nilr[2], nilr[3])
 
     nilr = np.dot(nilr-t, R.T)
-    mriV = spherical_clip(np.dot(V-t, R.T), np.linalg.norm(nilr[-1])*0.8)
+    
+    mriV = np.dot(V-t, R.T)
+    if len(V) > 1000:
+        mriV = spherical_clip(np.dot(V-t, R.T), np.linalg.norm(nilr[-1])*0.8)
     # np.savetxt("runtime/mriV.obj", np.dot(mriV, R)+T, fmt="v %f %f %f")
     
     mV, mF, mCtrl, nilr_idx = MinimalSurface(mriV, nilr[0], nilr[1], nilr[2], nilr[3]) 
