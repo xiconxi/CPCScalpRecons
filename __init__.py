@@ -91,7 +91,7 @@ def ScalpReconstruct(V, nilr, cpc_inners=99):
 
 if __name__ == "__main__":
     m = sio.loadmat("data/result.mat")
-    cpc_V, cpc_F, cpc_CPC, T, B, N = ScalpReconstruct(m['head_R'], m['ref_R'])
+    cpc_V, cpc_F, cpc_CPC, T, B, N = ScalpReconstruct(m['head_R'], m['ref_R'], 499)
 
 
     import pyvista as pv 

@@ -72,6 +72,15 @@ def convert_to_uv(cpc):
     return uv 
 
 
+def fibonacci_resampling(N = 9801):
+    inv_golden_ratio = 2/(1+5**0.5)
+    index = np.arange(N)+0.5
+    P_lr = (np.copy(index) * inv_golden_ratio)%1
+    P_nz = np.arccos(1-2*index/N)/np.pi 
+    return np.column_stack([P_lr, P_nz])
+
+
+
 def get_border_line_strip(m, Al_vh, Ar_vh):
     border1 = []
     border2 = []
@@ -242,10 +251,10 @@ def generate_cpcmesh(scalp_v, scalp_f, Nzidx, Izidx, Alidx, Aridx, Cz=np.r_[0, 0
     F = []
     for i in range(n):
         for j in range(n - 1):
-            F.append(np.array([i * n + j + 1, i * n + j, (i + 1) * n + j + 1], dtype=np.uint16))
-            F.append(np.array([(i + 1) * n + j, (i + 1) * n + j + 1, i * n + j], dtype=np.uint16))
+            F.append(np.array([i * n + j + 1, i * n + j, (i + 1) * n + j + 1], dtype=np.uint32))
+            F.append(np.array([(i + 1) * n + j, (i + 1) * n + j + 1, i * n + j], dtype=np.uint32))
         F.append(np.array([(i + 1) * n, i * n, V.shape[0]-1], dtype=np.uint16))
-        F.append(np.array([(i + 1) * n - 1, (i + 2) * n - 1, V.shape[0]-2], dtype=np.uint16))
+        F.append(np.array([(i + 1) * n - 1, (i + 2) * n - 1, V.shape[0]-2], dtype=np.uint32))
 
     for j in range(n - 1):
         F.append(np.array([(n+1) * n + j + 1, (n+1) * n + j, j + 1], dtype=np.int32))

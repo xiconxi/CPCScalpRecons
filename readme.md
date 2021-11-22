@@ -14,6 +14,7 @@ conda install -c conda-forge igl, pyvista
 - Usage: 
 
 ```python
-from ScalpRecons import ScalpReconstruct
+from CPCScalpRecons import ScalpReconstruct
+V = igl.read_triangle_mesh("./data/12034_CPC.obj")
 V, F, cpc, T, N, B = ScalpReconstruct(Vs, nilr, cpc_inners=99)
 ```
