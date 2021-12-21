@@ -7,6 +7,7 @@ import numpy as np
 import igl
 from scipy.spatial import KDTree 
 import scipy.spatial.transform as transform
+from scipy.spatial.transform import Rotation as R
 
 from . import CPCSampling
 from . import TNBFrame
@@ -69,6 +70,10 @@ def spherical_clip(V, clip_radius, clip_angle=0.20*np.pi):
     V_select = V_x * V_y
     return V[V_select]
 
+def GetFrame(Tx: np.array, By: np.array, Nz: np.array, angle_degree):
+    r = R.from_rotvec(np.deg2rad(angle_degree%360)*Nz)
+    _Tx, _By = r.apply(Tx), r.apply(By)
+    return _Tx, _By, Nz
 
 def ScalpReconstruct(V, nilr, cpc_inners=99, fibonacci_samples = 9801 * 0): 
     if fibonacci_samples == 0:   
