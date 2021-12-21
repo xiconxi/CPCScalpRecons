@@ -16,5 +16,11 @@ conda install -c conda-forge igl, pyvista
 ```python
 from CPCScalpRecons import ScalpReconstruct
 V = igl.read_triangle_mesh("./data/12034_CPC.obj")
+
+# Grid Sampling
 V, F, cpc, T, N, B = ScalpReconstruct(Vs, nilr, cpc_inners=99)
+
+
+# Uniform Sampling 
+V, F, cpc, T, N, B = ScalpReconstruct(Vs, nilr, fibonacci_samples=9801)
 ```

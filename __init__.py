@@ -5,7 +5,7 @@ LastEditTime: 2020-11-20 18:52:35
 import scipy.io as sio
 import numpy as np 
 import igl
-import scipy.spatial.kdtree as kdtree 
+from scipy.spatial import KDTree 
 import scipy.spatial.transform as transform
 
 from . import CPCSampling
@@ -24,7 +24,7 @@ def border_approximate(Nz, Iz, Al, Ar, k = 30):
 def contrl_vertices(V_src, V_dst, unique=True):
     V_src_ = V_src/np.linalg.norm(V_src, axis=1)[:, np.newaxis]
     V_dst_ = V_dst/np.linalg.norm(V_dst, axis=1)[:, np.newaxis]
-    dis, idx = kdtree.KDTree(V_src_).query(V_dst_) 
+    dis, idx = KDTree(V_src_).query(V_dst_) 
     
     if unique == False: return idx
 
@@ -70,25 +70,31 @@ def spherical_clip(V, clip_radius, clip_angle=0.20*np.pi):
     return V[V_select]
 
 
-def ScalpReconstruct(V, nilr, cpc_inners=99):    
-    R, t = calibrate_nilr(nilr[0], nilr[1], nilr[2], nilr[3])
+def ScalpReconstruct(V, nilr, cpc_inners=99, fibonacci_samples = 9801 * 0): 
+    if fibonacci_samples == 0:   
+        R, t = calibrate_nilr(nilr[0], nilr[1], nilr[2], nilr[3])
+        nilr = np.dot(nilr-t, R.T)
+        
+        mriV = np.dot(V-t, R.T)
+        if len(V) > 1000:
+            mriV = spherical_clip(np.dot(V-t, R.T), np.linalg.norm(nilr[-1])*0.8)
+        # np.savetxt("runtime/mriV.obj", np.dot(mriV, R)+T, fmt="v %f %f %f")
+        
+        mV, mF, mCtrl, nilr_idx = MinimalSurface(mriV, nilr[0], nilr[1], nilr[2], nilr[3]) 
+        Nzidx, Izidx, Alidx, Aridx = nilr_idx
 
-    nilr = np.dot(nilr-t, R.T)
-    
-    mriV = np.dot(V-t, R.T)
-    if len(V) > 1000:
-        mriV = spherical_clip(np.dot(V-t, R.T), np.linalg.norm(nilr[-1])*0.8)
-    # np.savetxt("runtime/mriV.obj", np.dot(mriV, R)+T, fmt="v %f %f %f")
-    
-    mV, mF, mCtrl, nilr_idx = MinimalSurface(mriV, nilr[0], nilr[1], nilr[2], nilr[3]) 
-    Nzidx, Izidx, Alidx, Aridx = nilr_idx
+        cpc_V, cpc_CPC, cpc_F = CPCSampling.generate_cpcmesh(mV, mF, Nzidx, Izidx, Alidx, Aridx, n=cpc_inners)
+        cpc_N = igl.per_vertex_normals(cpc_V, cpc_F, igl.PER_VERTEX_NORMALS_WEIGHTING_TYPE_ANGLE)
+        T, B, N = TNBFrame.TNB_frame(cpc_V, cpc_N, cpc_inners)
+        cpc_V, T, B, N = np.dot(cpc_V, R)+t, np.dot(T, R), np.dot(B, R), np.dot(N, R)
+        return cpc_V, cpc_F, cpc_CPC, T, B, N
 
-    cpc_V, cpc_CPC, cpc_F = CPCSampling.generate_cpcmesh(mV, mF, Nzidx, Izidx, Alidx, Aridx, n=cpc_inners)
-    cpc_N = igl.per_vertex_normals(cpc_V, cpc_F, igl.PER_VERTEX_NORMALS_WEIGHTING_TYPE_ANGLE)
-    T, B, N = TNBFrame.TNB_frame(cpc_V, cpc_N, cpc_inners)
-    cpc_V, T, B, N = np.dot(cpc_V, R)+t, np.dot(T, R), np.dot(B, R), np.dot(N, R)
-    return cpc_V, cpc_F, cpc_CPC, T, B, N
-
+    else:
+        _V, _F, _V_CPC, _T, _N, _B = ScalpReconstruct(V, nilr, cpc_inners=699)
+        index, fb_CPC, fb_F = CPCSampling.load_fibonacci(fibonacci_samples)
+        fb_V, fb_T, fb_N, fb_B = _V[index], _T[index], _N[index], _B[index]
+        return fb_V, fb_F, fb_CPC, fb_T, fb_B, fb_N
+        
 if __name__ == "__main__":
     m = sio.loadmat("data/result.mat")
     cpc_V, cpc_F, cpc_CPC, T, B, N = ScalpReconstruct(m['head_R'], m['ref_R'], 499)

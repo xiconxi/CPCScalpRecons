@@ -79,6 +79,15 @@ def fibonacci_resampling(N = 9801):
     P_nz = np.arccos(1-2*index/N)/np.pi 
     return np.column_stack([P_lr, P_nz])
 
+def load_fibonacci(N = 9801):
+    assert(N%9801 == 0)
+    import os
+    file_path = os.path.dirname(os.path.realpath(__file__))
+    CPC = np.loadtxt( file_path + "/" + "data/fb-"+str(N)+".txt")
+    index = np.load(file_path + "/" + "data/fb-699-"+str(N)+".npy").astype(np.int32)
+    m = om.read_trimesh( file_path + "/" + "data/fb-"+str(N)+".obj")
+    SSR_V, SSR_F = m.points(), m.face_vertex_indices()
+    return index, CPC, SSR_F
 
 
 def get_border_line_strip(m, Al_vh, Ar_vh):
