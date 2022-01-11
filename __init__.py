@@ -74,7 +74,7 @@ def spherical_clip(V, clip_radius, clip_angle=0.20*np.pi):
 def GetCoilFrame(P: np.ndarray, FrameT: np.ndarray, FrameB: np.ndarray, FrameN: np.ndarray, p_nz: np.int, p_al: np.int, angle_degree):
     assert(p_nz >= 1 and p_al >= 1)
     assert(p_nz <= 99 and p_al <= 99)
-    idx = (p_nz-1) * 99 + p_al - 1
+    idx = np.int((p_nz-1) * 99 + p_al - 1)
     r = R.from_rotvec(np.deg2rad(angle_degree%360)*FrameN[idx])
     trans = np.eye(4)
     trans[:3, 0], trans[:3, 1] = r.apply(FrameT[idx]), r.apply(FrameB[idx])
