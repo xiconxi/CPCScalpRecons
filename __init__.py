@@ -70,10 +70,17 @@ def spherical_clip(V, clip_radius, clip_angle=0.20*np.pi):
     V_select = V_x * V_y
     return V[V_select]
 
-def GetFrame(Tx: np.array, By: np.array, Nz: np.array, angle_degree):
-    r = R.from_rotvec(np.deg2rad(angle_degree%360)*Nz)
-    _Tx, _By = r.apply(Tx), r.apply(By)
-    return _Tx, _By, Nz
+
+def GetCoilFrame(P: np.ndarray, FrameT: np.ndarray, FrameB: np.ndarray, FrameN: np.ndarray, p_nz: np.int, p_al: np.int, angle_degree):
+    assert(p_nz >= 1 and p_al >= 1)
+    assert(p_nz <= 99 and p_al <= 99)
+    idx = (p_nz-1) * 99 + p_al - 1
+    r = R.from_rotvec(np.deg2rad(angle_degree%360)*FrameN[idx])
+    trans = np.eye(4)
+    trans[:3, 0], trans[:3, 1] = r.apply(FrameT[idx]), r.apply(FrameB[idx])
+    trans[:3, 2] = -FrameN[idx]
+    trans[:3, 3] = P[idx]
+    return trans
 
 def ScalpReconstruct(V, nilr, cpc_inners=99, fibonacci_samples = 9801 * 0): 
     if fibonacci_samples == 0:   
